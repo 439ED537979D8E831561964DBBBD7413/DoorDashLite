@@ -1,22 +1,46 @@
-package adamhurwitz.github.io.doordashlite;
+package adamhurwitz.github.io.doordashlite.dbflow;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import com.raizlabs.android.dbflow.annotation.Column;
+import com.raizlabs.android.dbflow.annotation.PrimaryKey;
+import com.raizlabs.android.dbflow.annotation.Table;
+import com.raizlabs.android.dbflow.structure.BaseModel;
 
 /**
  * Created by ahurwitz on 7/7/17.
  */
 
-public class Restaurant implements Parcelable {
+@Table(database = DoorDashDb.class)
+public class Restaurant extends BaseModel implements Parcelable {
 
+    @Column
+    @PrimaryKey
     private int id;
+
+    @Column
     private String name;
+
+    @Column
     private String description;
+
+    @Column
     private String cover_img_url;
+
+    @Column
     private String status;
+
+    @Column
     private double delivery_fee;
 
-    private Restaurant(Parcel in) {
+    @Column
+    private boolean isFavorite;
+
+    public Restaurant() {
+    }
+
+    public Restaurant(Parcel in) {
         id = in.readInt();
         name = in.readString();
         description = in.readString();
@@ -85,6 +109,14 @@ public class Restaurant implements Parcelable {
         this.delivery_fee = delivery_fee;
     }
 
+    public boolean isFavorite() {
+        return isFavorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        isFavorite = favorite;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -100,4 +132,3 @@ public class Restaurant implements Parcelable {
         dest.writeDouble(delivery_fee);
     }
 }
-//}
