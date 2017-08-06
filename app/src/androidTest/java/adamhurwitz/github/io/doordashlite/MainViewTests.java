@@ -8,10 +8,8 @@ import android.support.test.espresso.ViewAssertion;
 import android.support.test.espresso.contrib.RecyclerViewActions;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
-
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -21,14 +19,12 @@ import org.junit.runner.RunWith;
 import adamhurwitz.github.io.doordashlite.DependencyInjection.DaggerDataComponent;
 import adamhurwitz.github.io.doordashlite.DependencyInjection.DataComponent;
 import adamhurwitz.github.io.doordashlite.UI.MainActivity;
-
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Instrumentation test, which will execute on an Android device.
@@ -78,21 +74,17 @@ public class MainViewTests {
         try {
             onView(withId(R.id.recyclerView)).perform(
                     RecyclerViewActions.actionOnItemAtPosition(checkPositionAt, MyViewAction.clickChildViewWithId(R.id.fav)));
-            MainViewModel.getRestaurantsFromDb()
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(restaurants -> {
-                       assertEquals(true, restaurants.get(checkPositionAt).isFavorite());
-                    });
         } catch (PerformException e) {
+            Log.v(MainViewTests.class.getSimpleName(), "ERROR, RecyclerView Click: " + e.toString());
             e.printStackTrace();
         }
 
+        assertEquals(true, MainViewModel.getRestaurantsFromDb().toBlocking().first().get(checkPositionAt).isFavorite());
     }
 
     @Test
     public void checkRecyclerViewIsPopulated() throws Exception {
-        onView(withId(R.id.recyclerView)).check(new RecyclerViewItemCountAssertion(257));
+        onView(withId(R.id.recyclerView)).check(new RecyclerViewItemCountAssertion(247));
     }
 
     public class RecyclerViewItemCountAssertion implements ViewAssertion {
@@ -107,17 +99,7 @@ public class MainViewTests {
             if (noViewFoundException != null) {
                 throw noViewFoundException;
             }
-
-            MainViewModel.getRestaurantsFromDb()
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(restaurants -> {
-                                RecyclerView recyclerView = (RecyclerView) view;
-                                RecyclerView.Adapter adapter = recyclerView.getAdapter();
-                                assertEquals(adapter.getItemCount(), restaurants.size());
-                            },
-                            throwable -> Log.e(MainViewModel.class.getSimpleName(), throwable.toString()));
-
+            assertEquals(expectedCount, MainViewModel.getRestaurantsFromDb().toBlocking().first().size());
         }
     }
 

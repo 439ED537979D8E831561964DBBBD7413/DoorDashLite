@@ -2,6 +2,7 @@ package adamhurwitz.github.io.doordashlite;
 
 import android.support.test.espresso.UiController;
 import android.support.test.espresso.ViewAction;
+import android.util.Log;
 import android.view.View;
 
 import org.hamcrest.Matcher;
@@ -26,6 +27,7 @@ public class MyViewAction {
 
             @Override
             public void perform(UiController uiController, View view) {
+                Log.v(MyViewAction.class.getSimpleName(), "ERROR, perform(): " + view.toString());
                 View v = view.findViewById(id);
                 v.performClick();
             }

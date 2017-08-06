@@ -20,7 +20,8 @@ public class RepositoryMock extends Repository {
 
 
     @Override
-    public Observable<List<Restaurant>> getRestaurantsFromNetwork() {
+    public Observable<List<Restaurant>> getRestaurantsFromNetwork(String path,
+                                                                  double lat, double lng) {
 
         List<Restaurant> restaurantList = new ArrayList<>();
 

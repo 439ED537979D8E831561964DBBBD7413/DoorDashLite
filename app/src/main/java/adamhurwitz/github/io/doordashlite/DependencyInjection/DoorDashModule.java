@@ -4,8 +4,10 @@ import android.app.Application;
 
 import javax.inject.Singleton;
 
+import adamhurwitz.github.io.doordashlite.BuildConfig;
 import adamhurwitz.github.io.doordashlite.Network.Repository;
 import adamhurwitz.github.io.doordashlite.Network.Service;
+import adamhurwitz.github.io.doordashlite.StethoInitialization;
 import dagger.Module;
 import dagger.Provides;
 import okhttp3.OkHttpClient;
@@ -19,7 +21,7 @@ import retrofit2.RxJavaCallAdapterFactory;
 @Module
 public class DoorDashModule {
 
-    private static final String BASE_URL = "https://api.doordash.com";
+    private static final String BASE_URL = "https://api.doordash.com/v2/";
 
     Application application;
 
@@ -30,16 +32,20 @@ public class DoorDashModule {
     @Provides
     @Singleton
     public OkHttpClient provideHttpClient(){
-        return new OkHttpClient();
+        if (BuildConfig.DEBUG) {
+            return StethoInitialization.getStethoClient();
+        } else {
+            return new OkHttpClient();
+        }
     }
 
     @Provides
     @Singleton
-    Retrofit provideRetrofit(OkHttpClient okHttpClient){
+    Retrofit provideRetrofit(OkHttpClient client){
         return new Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create())
                 .baseUrl(BASE_URL)
-                .client(okHttpClient)
+                .client(client)
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .build();
     }

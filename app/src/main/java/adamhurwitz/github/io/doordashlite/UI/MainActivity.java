@@ -1,16 +1,18 @@
 package adamhurwitz.github.io.doordashlite.UI;
 
+import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.ProgressBar;
+
 import java.util.List;
 
 import adamhurwitz.github.io.doordashlite.MainViewModel;
 import adamhurwitz.github.io.doordashlite.R;
+import adamhurwitz.github.io.doordashlite.RxHelpers;
 import adamhurwitz.github.io.doordashlite.dbflow.Restaurant;
 import rx.subscriptions.CompositeSubscription;
 
@@ -37,7 +39,7 @@ public class MainActivity extends AppCompatActivity implements MainViewModel.Mai
     protected void onDestroy() {
         super.onDestroy();
         compositeSubscription.clear();
-        mainView.clearSubscriptions();;
+        mainView.clearSubscriptions();
     }
 
     private void initViews() {
@@ -52,15 +54,7 @@ public class MainActivity extends AppCompatActivity implements MainViewModel.Mai
 
     private void initSwipeToRefresh() {
         swipeRefreshLayout.setColorSchemeResources((R.color.colorPrimaryDark));
-        swipeRefreshLayout.setOnRefreshListener(() ->
-                mainView.getRestaurantsFromDb()
-                        .doOnCompleted(() -> {
-                            adapter.notifyDataSetChanged();
-                            swipeRefreshLayout.setRefreshing(false);
-                        })
-                        .subscribe(restaurants -> {
-                            adapter.addItems(restaurants);
-                        }, throwable -> Log.e(MainActivity.class.getSimpleName(), throwable.toString())));
+        swipeRefreshLayout.setOnRefreshListener(() -> mainView.getRestauarantsFromDb());
     }
 
     private void initRecyclerViewAdapter() {
@@ -72,6 +66,7 @@ public class MainActivity extends AppCompatActivity implements MainViewModel.Mai
 
     private void onFavoriteEvent() {
         compositeSubscription.add(adapter.onFavoriteEvent()
+                .compose(RxHelpers.IOAndMainThreadSchedulers())
                 .subscribe(pair -> {
                     pair.second.setFavorite(mainView.isFavorite(pair.second.getId()) ? false : true);
                     pair.second.save();
@@ -86,6 +81,11 @@ public class MainActivity extends AppCompatActivity implements MainViewModel.Mai
     @Override
     public void setProgressBar(boolean status) {
         progressBar.setVisibility(status ? ProgressBar.VISIBLE : ProgressBar.INVISIBLE);
+    }
+
+    @Override
+    public void setSwipeRefresh(boolean status) {
+        swipeRefreshLayout.setRefreshing(status);
     }
 
     @Override

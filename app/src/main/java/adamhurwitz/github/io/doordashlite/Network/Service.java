@@ -4,6 +4,8 @@ import java.util.List;
 
 import adamhurwitz.github.io.doordashlite.dbflow.Restaurant;
 import retrofit2.http.GET;
+import retrofit2.http.Path;
+import retrofit2.http.Query;
 import rx.Observable;
 
 /**
@@ -11,6 +13,10 @@ import rx.Observable;
  */
 
 public interface Service {
-    @GET("/v2/restaurant/?lat=37.422740&lng=-122.139956")
-    Observable<List<Restaurant>> getRestaurauntsFromNetwork();
+    @GET("{path}")
+    Observable<List<Restaurant>> getRestaurauntsFromNetwork(
+            @Path("path") String path,
+            @Query("lat") double lat,
+            @Query("lng") double lng
+    );
 }

@@ -35,6 +35,8 @@ public class DoorDashLiteApplication extends Application {
 
         FlowManager.init(new FlowConfig.Builder(this).build());
 
+        StethoInitialization.checkToEnable(this);
+
     }
 
     private void initDataComponent() {
