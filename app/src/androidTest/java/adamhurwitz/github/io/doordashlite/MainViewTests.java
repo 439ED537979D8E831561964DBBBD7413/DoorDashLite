@@ -3,12 +3,9 @@ package adamhurwitz.github.io.doordashlite;
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.NoMatchingViewException;
-import android.support.test.espresso.PerformException;
 import android.support.test.espresso.ViewAssertion;
-import android.support.test.espresso.contrib.RecyclerViewActions;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
-import android.util.Log;
 import android.view.View;
 
 import org.junit.Before;
@@ -18,6 +15,7 @@ import org.junit.runner.RunWith;
 
 import adamhurwitz.github.io.doordashlite.DependencyInjection.DaggerDataComponent;
 import adamhurwitz.github.io.doordashlite.DependencyInjection.DataComponent;
+import adamhurwitz.github.io.doordashlite.Network.Repository;
 import adamhurwitz.github.io.doordashlite.UI.MainActivity;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -62,24 +60,10 @@ public class MainViewTests {
 
     @Test
     public void checkDbPopulationNotNull() throws Exception {
-        MainViewModel.getRestaurantsFromDb()
+        Repository.getRestaurantsFromDb()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(restaurants -> assertEquals(true, !restaurants.isEmpty()));
-    }
-
-    @Test
-    public void checkFavIsSaved() throws Exception {
-        int checkPositionAt = 0;
-        try {
-            onView(withId(R.id.recyclerView)).perform(
-                    RecyclerViewActions.actionOnItemAtPosition(checkPositionAt, MyViewAction.clickChildViewWithId(R.id.fav)));
-        } catch (PerformException e) {
-            Log.v(MainViewTests.class.getSimpleName(), "ERROR, RecyclerView Click: " + e.toString());
-            e.printStackTrace();
-        }
-
-        assertEquals(true, MainViewModel.getRestaurantsFromDb().toBlocking().first().get(checkPositionAt).isFavorite());
     }
 
     @Test
@@ -99,7 +83,7 @@ public class MainViewTests {
             if (noViewFoundException != null) {
                 throw noViewFoundException;
             }
-            assertEquals(expectedCount, MainViewModel.getRestaurantsFromDb().toBlocking().first().size());
+            assertEquals(expectedCount, Repository.getRestaurantsFromDb().toBlocking().first().size());
         }
     }
 

@@ -43,9 +43,9 @@ public class MainActivity extends AppCompatActivity implements MainViewModel.Mai
     }
 
     private void initViews() {
-        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
-        progressBar = (ProgressBar) findViewById(R.id.pbLoading);
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        swipeRefreshLayout = findViewById(R.id.swiperefresh);
+        progressBar = findViewById(R.id.pbLoading);
+        recyclerView = findViewById(R.id.recyclerView);
 
         initSwipeToRefresh();
         initRecyclerViewAdapter();

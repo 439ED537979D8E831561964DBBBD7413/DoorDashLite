@@ -122,7 +122,7 @@ public class Repository {
     private void saveRestaurants(List<Restaurant> restaurants) {
         FlowManager.getDatabase(DoorDashDb.class)
                 .beginTransactionAsync(new ProcessModelTransaction.Builder<>(
-                        (ProcessModelTransaction.ProcessModel<Restaurant>) (restaurant)
+                        (ProcessModelTransaction.ProcessModel<Restaurant>) (restaurant, Object)
                                 -> restaurant.save()).addAll(restaurants).build())
                 .error((transaction, error) -> {
                     Log.e(MainViewModel.class.getSimpleName(), error.toString());
