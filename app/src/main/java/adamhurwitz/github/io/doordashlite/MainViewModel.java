@@ -1,6 +1,6 @@
 package adamhurwitz.github.io.doordashlite;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.Log;
 
 import com.raizlabs.android.dbflow.sql.language.SQLite;

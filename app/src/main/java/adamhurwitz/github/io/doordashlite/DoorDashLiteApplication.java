@@ -1,7 +1,7 @@
 package adamhurwitz.github.io.doordashlite;
 
 import android.app.Application;
-import android.support.annotation.VisibleForTesting;
+import androidx.annotation.VisibleForTesting;
 
 import com.raizlabs.android.dbflow.config.FlowConfig;
 import com.raizlabs.android.dbflow.config.FlowManager;
